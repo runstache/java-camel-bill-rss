@@ -5,6 +5,8 @@ import com.lswebworld.rssbillreader.dataobjects.BillInfo;
 import com.lswebworld.rssbillreader.dataobjects.ScheduleEntry;
 import com.lswebworld.rssbillreader.processors.DatabaseProcessor;
 import com.lswebworld.rssbillreader.processors.RssProcessor;
+import com.lswebworld.rssbillreader.processors.ScheduleDatabaseProcessor;
+import com.lswebworld.rssbillreader.processors.ScheduleProcessor;
 import com.lswebworld.rssbillreader.tranformers.RssTransformer;
 import com.lswebworld.rssbillreader.tranformers.ScheduleTransformer;
 import com.lswebworld.rssbillreader.tranformers.Transformer;
@@ -39,4 +41,13 @@ public class BeanRegistry {
     return new DatabaseProcessor();
   }
 
+  @Bean(name = ProcessorConstants.SCHEDULE_PROCESSOR)
+  public ScheduleProcessor scheduleProcessor() {
+    return new ScheduleProcessor();
+  }
+
+  @Bean(name = ProcessorConstants.SCHEDULE_DB_PROCESSOR)
+  public ScheduleDatabaseProcessor scheduleDatabaseProcessor() {
+    return new ScheduleDatabaseProcessor();
+  }
 }

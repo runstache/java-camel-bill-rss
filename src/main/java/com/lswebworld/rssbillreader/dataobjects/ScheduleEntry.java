@@ -1,5 +1,6 @@
 package com.lswebworld.rssbillreader.dataobjects;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -24,7 +25,7 @@ import lombok.Setter;
 @Setter
 @EqualsAndHashCode
 @Entity
-@Table(name = "schedule_entries")
+@Table(name = "schedule_items")
 @JsonPropertyOrder(alphabetic = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -32,6 +33,7 @@ public class ScheduleEntry {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @JsonIgnore
   @Column(name = "id")
   private long id;
 
@@ -45,9 +47,15 @@ public class ScheduleEntry {
   @JsonDeserialize(using = ZonedDateTimeDeserializer.class)
   private ZonedDateTime scheduleDate;
 
+  @JsonIgnore
+  @Column(name = "schedule_type")
+  private String scheduleType;
+
+  @JsonIgnore
   @Column(name = "created_on")
   private ZonedDateTime createdOn;
 
+  @JsonIgnore
   @Column(name = "updated_on")
   private ZonedDateTime updatedOn;
 

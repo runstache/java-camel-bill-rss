@@ -1,6 +1,7 @@
 package com.lswebworld.rssbillreader.routes;
 
 import com.lswebworld.rssbillreader.constants.ProcessorConstants;
+import com.lswebworld.rssbillreader.dataobjects.EtlException;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +13,7 @@ public class RssRoute extends RouteBuilder {
   @Override
   public void configure() {
 
-    onException(Exception.class)
+    onException(EtlException.class)
             .log("ERROR")
             .end();
 

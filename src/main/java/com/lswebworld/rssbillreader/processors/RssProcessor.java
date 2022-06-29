@@ -1,5 +1,6 @@
 package com.lswebworld.rssbillreader.processors;
 
+import com.lswebworld.rssbillreader.constants.ErrorConstants;
 import com.lswebworld.rssbillreader.dataobjects.BillInfo;
 import com.lswebworld.rssbillreader.dataobjects.EtlException;
 import com.lswebworld.rssbillreader.tranformers.Transformer;
@@ -29,10 +30,10 @@ public class RssProcessor implements Processor {
       if (bill.isPresent()) {
         exchange.getMessage().setBody(bill.get());
       } else {
-        throw new EtlException("FAILED TO CREATE BILL INFORMATION.");
+        throw new EtlException(ErrorConstants.BILL_TRANSFORM_FAILURE);
       }
     } catch (URISyntaxException ex) {
-      throw new EtlException("URI TRANSFORMATION FAILED.", ex);
+      throw new EtlException(ErrorConstants.BILL_TRANSFORM_FAILURE, ex);
     }
 
   }
