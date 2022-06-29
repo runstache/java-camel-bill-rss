@@ -1,14 +1,14 @@
 package com.lswebworld.rssbillreader.processors;
 
 import com.lswebworld.rssbillreader.dataobjects.BillInfo;
+import com.lswebworld.rssbillreader.dataobjects.EtlException;
 import com.lswebworld.rssbillreader.tranformers.Transformer;
-import com.rometools.rome.feed.synd.SyndFeed;
 import java.net.URISyntaxException;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * Processor for handling Rss Entries.
@@ -17,12 +17,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class RssProcessor implements Processor {
 
   @Autowired
-  Transformer transformer;
+  @Qualifier("RssTransformer")
+  Transformer<BillInfo> transformer;
 
   @Override
-  public void process(Exchange exchange) throws URISyntaxException {
-    var body = exchange.getMessage().getBody(SyndFeed.class);
-    List<BillInfo> bills = transformer.transform(body);
-    exchange.getMessage().setBody(bills);
+  public void process(Exchange exchange) throws EtlException {
+
+    try {
+      var body = exchange.getMessage().getBody().toString();
+      var bill = transformer.transform(body);
+      if (bill.isPresent()) {
+        exchange.getMessage().setBody(bill.get());
+      } else {
+        throw new EtlException("FAILED TO CREATE BILL INFORMATION.");
+      }
+    } catch (URISyntaxException ex) {
+      throw new EtlException("URI TRANSFORMATION FAILED.", ex);
+    }
+
   }
 }

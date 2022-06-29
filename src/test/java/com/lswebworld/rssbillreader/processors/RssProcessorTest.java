@@ -3,19 +3,20 @@ package com.lswebworld.rssbillreader.processors;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.lswebworld.rssbillreader.dataobjects.BillInfo;
-import com.rometools.rome.feed.synd.SyndContentImpl;
-import com.rometools.rome.feed.synd.SyndEntryImpl;
-import com.rometools.rome.feed.synd.SyndFeed;
-import com.rometools.rome.feed.synd.SyndFeedImpl;
-import java.util.List;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.ExchangeBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -23,6 +24,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @TestPropertySource("classpath:application-test.properties")
+@Slf4j
 class RssProcessorTest {
 
   @EndpointInject("direct:rss-input")
@@ -31,31 +33,26 @@ class RssProcessorTest {
   @EndpointInject("mock:rss-output")
   MockEndpoint output;
 
+  @Autowired
+  ResourceLoader loader;
 
-  private SyndFeed feed;
-
+  private static final String XML_FILE = "classpath:item.xml";
+  private String xmlData;
   @BeforeEach
   void setup() {
-    var entry = new SyndEntryImpl();
-    entry.setUri("20210HB2010P3056");
-    entry.setLink("https://www.legis.state.pa.us/cfdocs/legis/PN/Public/btCheck.cfm?txtType=HTM"
-            + "&sessYr=2021&sessInd=0&billBody=H&billTyp=B&billNbr=2010&pn=3056");
-    entry.setTitle("House Bill 2711 Printer's Number 3311");
-
-    var desc = new SyndContentImpl();
-    desc.setValue("An Act amending Title 20 (Decedents, Estates and Fiduciaries) of the Pennsylvania Consolidated"
-            + " Statutes, providing for training of public pension fund and State fund fiduciaries....");
-    entry.setDescription(desc);
-    feed = new SyndFeedImpl();
-    feed.getEntries().add(entry);
+    try (var stream = loader.getResource(XML_FILE).getInputStream()) {
+      xmlData = IOUtils.toString(stream, StandardCharsets.UTF_8);
+      IOUtils.consume(stream);
+    } catch (IOException ex) {
+      log.error("COULD NOT LOAD FILE", ex);
+    }
   }
 
   @Test
   @DirtiesContext
-  @SuppressWarnings("unchecked")
   void testProcessFeed() {
     var exchange = ExchangeBuilder.anExchange(template.getCamelContext())
-            .withBody(feed)
+            .withBody(xmlData)
             .build();
     template.send(exchange);
 
@@ -63,9 +60,9 @@ class RssProcessorTest {
 
     var msg = output.getExchanges().get(0);
 
-    List<BillInfo> bills = msg.getMessage().getBody(List.class);
-
-    assertThat(bills).as("Bills should not be empty").isNotEmpty();
+    assertThat(msg.getMessage().getBody())
+            .as("Body should be a Bill Info")
+            .isInstanceOf(BillInfo.class);
   }
 
 }

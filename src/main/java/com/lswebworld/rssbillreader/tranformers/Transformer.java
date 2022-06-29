@@ -1,22 +1,20 @@
 package com.lswebworld.rssbillreader.tranformers;
 
-import com.lswebworld.rssbillreader.dataobjects.BillInfo;
-import com.rometools.rome.feed.synd.SyndFeed;
 import java.net.URISyntaxException;
-import java.util.List;
+import java.util.Optional;
 
 /**
  * RSS element Transformer Interface.
  */
-public interface Transformer {
+public interface Transformer<T> {
 
   /**
    * Transforms an instance of an RSS Feed to a Bill Info Data Class.
    *
-   * @param feed Synd Feed
+   * @param value XML/JSON Feed Value
    * @return Bill Info.
    */
-  List<BillInfo> transform(SyndFeed feed) throws URISyntaxException;
+  Optional<T> transform(String value) throws URISyntaxException;
 
 
 }

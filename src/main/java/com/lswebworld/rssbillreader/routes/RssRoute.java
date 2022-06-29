@@ -12,13 +12,34 @@ public class RssRoute extends RouteBuilder {
   @Override
   public void configure() {
 
-    from("rss:https://www.legis.state.pa.us/WU01/LI/RSS/HouseBills.xml?splitEntries=true")
-            .routeId("RSS Feed Route")
-            .log("Getting Entries")
-            .bean(ProcessorConstants.RSS_PROCESSOR)
-            .log("Done")
+    onException(Exception.class)
+            .log("ERROR")
             .end();
 
+    from("rss:https://www.legis.state.pa.us/WU01/LI/RSS/HouseBills.xml?splitEntries=false&delay=60000")
+            .routeId("house-bills")
+            .onCompletion()
+                .log("Finished Pulling House Bills")
+                .end()
+            .log("Processing House Bills")
+            .marshal().rss()
+            .split().tokenizeXML("item").streaming()
+            .parallelProcessing(true).threads(50, 250)
+            .bean(ProcessorConstants.RSS_PROCESSOR)
+            .bean(ProcessorConstants.DATABASE_PROCESSOR)
+            .end();
 
+    from("rss:https://www.legis.state.pa.us/WU01/LI/RSS/SenateBills.xml?splitEntries=false&delay=60000")
+            .routeId("senate-bills")
+            .onCompletion()
+                .log("Finished Pulling Senate Bills")
+                .end()
+            .log("Processing Senate Bills")
+            .marshal().rss()
+            .split().tokenizeXML("item").streaming()
+            .parallelProcessing(true).threads(50, 250)
+            .bean(ProcessorConstants.RSS_PROCESSOR)
+            .bean(ProcessorConstants.DATABASE_PROCESSOR)
+            .end();
   }
 }

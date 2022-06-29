@@ -1,96 +1,88 @@
 package com.lswebworld.rssbillreader.tranformers;
 
-import com.lswebworld.rssbillreader.constants.ForeignFieldConstants;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.lswebworld.rssbillreader.dataobjects.BillInfo;
-import com.rometools.rome.feed.synd.SyndEntry;
-import com.rometools.rome.feed.synd.SyndFeed;
+import com.lswebworld.rssbillreader.dataobjects.RssItem;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
-import org.apache.commons.lang3.ObjectUtils;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.client.utils.URLEncodedUtils;
-import org.jdom2.Element;
 
 /**
  * Implementation of Transformer for RSS Elements.
  */
-public class RssTransformer implements Transformer {
+@Slf4j
+public class RssTransformer implements Transformer<BillInfo> {
   @Override
-  public List<BillInfo> transform(SyndFeed feed) throws URISyntaxException {
-    List<BillInfo> bills = new ArrayList<>();
+  public Optional<BillInfo> transform(String value) throws URISyntaxException {
+    try {
 
-    if (ObjectUtils.isNotEmpty(feed.getEntries())) {
+      var mapper = new XmlMapper();
+      var rss = mapper.readValue(cleanUpXml(value), RssItem.class);
+      var bill = rss.getItem();
+      bill.setUpdatedOn(ZonedDateTime.now().withZoneSameInstant(ZoneId.of("UTC")));
+      bill.setCreatedOn(ZonedDateTime.now().withZoneSameInstant(ZoneId.of("UTC")));
+      bill.setUrl(updateUri(bill.getUrl()));
+      return Optional.of(bill);
+    } catch (JsonProcessingException ex) {
+      log.error("FAILED TO PARSE RSS ITEM", ex);
 
-      for (var entry : feed.getEntries()) {
-        var info = new BillInfo();
-        info.setDescription(entry.getDescription().getValue());
-        info.setTitle(entry.getTitle());
-        info.setIdentifier(entry.getUri());
-        info.setUrl(updateUri(entry.getLink()));
-        info.setPubDate(convertDate(entry.getPublishedDate()));
-        info.setEnacted(convertBoolean(getMetaValue(entry, ForeignFieldConstants.ENACTED)));
-        info.setCoSponsors(getMetaValue(entry, ForeignFieldConstants.CO_SPONSORS));
-        info.setLastAction(getMetaValue(entry, ForeignFieldConstants.LAST_ACTION));
-        info.setPassedHouse(convertBoolean(
-                getMetaValue(entry, ForeignFieldConstants.PASSED_HOUSE)));
-        info.setPassedSenate(convertBoolean(
-                getMetaValue(entry, ForeignFieldConstants.PASSED_SENATE)));
-        info.setPrimeSponsor(getMetaValue(entry, ForeignFieldConstants.PRIME_SPONSOR));
-        bills.add(info);
-      }
     }
-    return bills;
+    return Optional.empty();
   }
 
-  private String getMetaValue(SyndEntry entry, String name) {
-    Optional<Element> value =
-            entry.getForeignMarkup()
-                    .stream()
-                    .filter(c -> c.getName().equalsIgnoreCase(name))
-                    .findFirst();
-    if (value.isPresent()) {
-      return value.get().getValue();
+  private String updateUri(String url) throws URISyntaxException {
+    if (StringUtils.isNotEmpty(url)) {
+      var urlValue = Base64.getDecoder().decode(url.getBytes(StandardCharsets.UTF_8));
+
+      var uri = new URI(new String(urlValue, StandardCharsets.UTF_8).trim());
+      var builder = new URIBuilder()
+              .setScheme(uri.getScheme())
+              .setHost(uri.getHost())
+              .setPath(uri.getPath())
+              .setPort(uri.getPort());
+
+      List<NameValuePair> params = URLEncodedUtils.parse(uri, StandardCharsets.UTF_8);
+      for (var param : params) {
+        if (param.getName().equalsIgnoreCase("txtType")) {
+          builder.addParameter(param.getName(), "PDF");
+        } else {
+          builder.addParameter(param.getName(), param.getValue());
+        }
+      }
+      return builder.build().toString();
     }
     return "";
   }
 
-  private boolean convertBoolean(String value) {
-    return value.equalsIgnoreCase("yes");
-  }
-
-  private ZonedDateTime convertDate(Date value) {
-    if (ObjectUtils.isNotEmpty(value)) {
-      return ZonedDateTime.ofInstant(Instant.ofEpochMilli(value.getTime()), ZoneId.of("GMT"));
-    }
-    return null;
-  }
-
-  private String updateUri(String url) throws URISyntaxException {
-    var uri = new URI(url);
-    var builder = new URIBuilder()
-            .setScheme(uri.getScheme())
-            .setHost(uri.getHost())
-            .setPath(uri.getPath())
-            .setPort(uri.getPort());
-
-    List<NameValuePair> params = URLEncodedUtils.parse(uri, StandardCharsets.UTF_8);
-    for (var param : params) {
-      if (param.getName().equalsIgnoreCase("txtType")) {
-        builder.addParameter(param.getName(), "PDF");
-      } else {
-        builder.addParameter(param.getName(), param.getValue());
+  private String cleanUpXml(String value) {
+    String[] lines = value.split("\n");
+    for (int i = 0; i < lines.length; i++) {
+      if (lines[i].contains("<link>")) {
+        var temp = lines[i].replace("<link>", "").replace("</link>", "");
+        var url = Base64.getEncoder().encodeToString(temp.getBytes(StandardCharsets.UTF_8));
+        lines[i] = "<link>" + url + "</link>";
       }
     }
-    return builder.build().toString();
+
+    var itemBody = String.join(" ", lines);
+    return "<rss xmlns:dc=\"http://purl.org/dc/elements/1.1/\" "
+            + "xmlns:itunes=\"http://www.itunes.com/dtds/podcast-1.0.dtd\" "
+            + "xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" "
+            + "xmlns:taxo=\"http://purl.org/rss/1.0/modules/taxonomy/\" "
+            + "xmlns:parss=\"https://www.legis.state.pa.us/RSS\" version=\"2.0\">"
+            + itemBody
+            + "</rss>";
   }
 }
 

@@ -11,4 +11,6 @@ public class ProcessorConstants {
 
   public static final String RSS_PROCESSOR = "RssProcessor";
 
+  public static final String DATABASE_PROCESSOR = "DatabaseProcessor";
+
 }
