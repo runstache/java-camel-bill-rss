@@ -29,6 +29,7 @@ import lombok.Setter;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BillInfo {
 
+  @JsonProperty("title")
   @Column(name = "title")
   private String title;
 

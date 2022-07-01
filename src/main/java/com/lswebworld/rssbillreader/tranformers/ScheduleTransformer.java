@@ -37,6 +37,7 @@ public class ScheduleTransformer implements Transformer<ScheduleEntry> {
       schedule.setCreatedOn(ZonedDateTime.now().withZoneSameInstant(ZoneId.of("UTC")));
       schedule.setUpdatedOn(ZonedDateTime.now().withZoneSameInstant(ZoneId.of("UTC")));
       schedule.setIdentifier(parseIdentifer(schedule.getIdentifier()));
+      schedule.setScheduleDate(schedule.getScheduleDate().plusDays(1));
       return Optional.of(schedule);
 
     } catch (JsonProcessingException ex) {

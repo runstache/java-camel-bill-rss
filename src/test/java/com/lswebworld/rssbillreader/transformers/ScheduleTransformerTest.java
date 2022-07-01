@@ -45,7 +45,7 @@ class ScheduleTransformerTest {
     var zdt = ZonedDateTime.of(2022, 6,28, 19, 1, 29, 0, ZoneId.of("GMT"));
     assertThat(result.get().getScheduleDate())
             .as("Pub Date should be correct")
-            .isEqualTo(zdt);
+            .isEqualTo(zdt.plusDays(1));
     assertThat(result.get().getIdentifier())
             .as("Identifier should be 20210HB1332P2272")
             .isEqualToIgnoringCase("20210HB1332P2272");

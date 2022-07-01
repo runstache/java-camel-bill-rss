@@ -17,4 +17,8 @@ public class ProcessorConstants {
 
   public static final String SCHEDULE_DB_PROCESSOR = "ScheduleDatabaseProcessor";
 
+  public static final String BILL_HYDRATION_PROCESSOR = "BillHydradtionProcessor";
+
+  public static final String SCHEDULE_HYDRATION_PROCESSOR = "ScheduleHydrationProcessor";
+
 }

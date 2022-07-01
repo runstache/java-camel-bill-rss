@@ -27,6 +27,7 @@ public class RssRoute extends RouteBuilder {
             .split().tokenizeXML("item").streaming()
             .parallelProcessing(true).threads(50, 250)
             .bean(ProcessorConstants.RSS_PROCESSOR)
+            .bean(ProcessorConstants.BILL_HYDRATION_PROCESSOR)
             .bean(ProcessorConstants.DATABASE_PROCESSOR)
             .end();
 
@@ -40,6 +41,7 @@ public class RssRoute extends RouteBuilder {
             .split().tokenizeXML("item").streaming()
             .parallelProcessing(true).threads(50, 250)
             .bean(ProcessorConstants.RSS_PROCESSOR)
+            .bean(ProcessorConstants.BILL_HYDRATION_PROCESSOR)
             .bean(ProcessorConstants.DATABASE_PROCESSOR)
             .end();
   }

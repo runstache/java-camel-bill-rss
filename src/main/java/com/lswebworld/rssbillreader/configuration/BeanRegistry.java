@@ -3,9 +3,11 @@ package com.lswebworld.rssbillreader.configuration;
 import com.lswebworld.rssbillreader.constants.ProcessorConstants;
 import com.lswebworld.rssbillreader.dataobjects.BillInfo;
 import com.lswebworld.rssbillreader.dataobjects.ScheduleEntry;
+import com.lswebworld.rssbillreader.processors.BillHydrationProcessor;
 import com.lswebworld.rssbillreader.processors.DatabaseProcessor;
 import com.lswebworld.rssbillreader.processors.RssProcessor;
 import com.lswebworld.rssbillreader.processors.ScheduleDatabaseProcessor;
+import com.lswebworld.rssbillreader.processors.ScheduleHydrationProcessor;
 import com.lswebworld.rssbillreader.processors.ScheduleProcessor;
 import com.lswebworld.rssbillreader.tranformers.RssTransformer;
 import com.lswebworld.rssbillreader.tranformers.ScheduleTransformer;
@@ -49,5 +51,15 @@ public class BeanRegistry {
   @Bean(name = ProcessorConstants.SCHEDULE_DB_PROCESSOR)
   public ScheduleDatabaseProcessor scheduleDatabaseProcessor() {
     return new ScheduleDatabaseProcessor();
+  }
+
+  @Bean(name = ProcessorConstants.BILL_HYDRATION_PROCESSOR)
+  public BillHydrationProcessor billHydrationProcessor() {
+    return new BillHydrationProcessor();
+  }
+
+  @Bean(name = ProcessorConstants.SCHEDULE_HYDRATION_PROCESSOR)
+  public ScheduleHydrationProcessor scheduleHydrationProcessor() {
+    return new ScheduleHydrationProcessor();
   }
 }

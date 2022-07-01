@@ -30,6 +30,7 @@ public class ScheduleRoute extends RouteBuilder {
             .split().tokenizeXML("item").streaming().parallelProcessing(true)
             .threads(50, 250)
             .bean(ProcessorConstants.SCHEDULE_PROCESSOR)
+            .bean(ProcessorConstants.SCHEDULE_HYDRATION_PROCESSOR)
             .bean(ProcessorConstants.SCHEDULE_DB_PROCESSOR)
             .end();
 
@@ -44,6 +45,7 @@ public class ScheduleRoute extends RouteBuilder {
             .split().tokenizeXML("item").streaming().parallelProcessing(true)
             .threads(50, 250)
             .bean(ProcessorConstants.SCHEDULE_PROCESSOR)
+            .bean(ProcessorConstants.SCHEDULE_HYDRATION_PROCESSOR)
             .bean(ProcessorConstants.SCHEDULE_DB_PROCESSOR)
             .end();
 

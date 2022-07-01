@@ -9,4 +9,11 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface ScheduleEntryRepository extends JpaRepository<ScheduleEntry, Long> {
+
+  /**
+   * Deletes all of the Schedule Entries based on Identifier.
+   *
+   * @param identifier Identifier.
+   */
+  void deleteAllByIdentifier(String identifier);
 }
