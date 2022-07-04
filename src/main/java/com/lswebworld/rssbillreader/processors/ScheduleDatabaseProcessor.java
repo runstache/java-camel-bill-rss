@@ -1,6 +1,6 @@
 package com.lswebworld.rssbillreader.processors;
 
-import com.lswebworld.rssbillreader.dataobjects.ScheduleEntry;
+import com.lswebworld.bills.data.dataobjects.ScheduleInfo;
 import com.lswebworld.rssbillreader.repositories.ScheduleEntryRepository;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -17,7 +17,7 @@ public class ScheduleDatabaseProcessor implements Processor {
 
   @Override
   public void process(Exchange exchange) {
-    var item = exchange.getMessage().getBody(ScheduleEntry.class);
+    var item = exchange.getMessage().getBody(ScheduleInfo.class);
     repo.save(item);
   }
 }

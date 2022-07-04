@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.lswebworld.bills.data.dataobjects.ScheduleInfo;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,6 +19,6 @@ import lombok.Setter;
 public class ScheduleRssItem {
 
   @JsonProperty("item")
-  private ScheduleEntry item;
+  private ScheduleInfo item;
 
 }

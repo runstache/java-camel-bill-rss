@@ -2,7 +2,8 @@ package com.lswebworld.rssbillreader.tranformers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.lswebworld.rssbillreader.dataobjects.BillInfo;
+import com.lswebworld.bills.data.dataobjects.BillInfo;
+import com.lswebworld.rssbillreader.constants.IntegrationConstants;
 import com.lswebworld.rssbillreader.dataobjects.RssItem;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -68,10 +69,8 @@ public class RssTransformer implements Transformer<BillInfo> {
   private String cleanUpXml(String value) {
     String[] lines = value.split("\n");
     for (int i = 0; i < lines.length; i++) {
-      if (lines[i].contains("<link>")) {
-        var temp = lines[i].replace("<link>", "").replace("</link>", "");
-        var url = Base64.getEncoder().encodeToString(temp.getBytes(StandardCharsets.UTF_8));
-        lines[i] = "<link>" + url + "</link>";
+      if (lines[i].contains(IntegrationConstants.LINK_XML_START)) {
+        lines[i] = encodeLink(lines[i]);
       }
     }
 
@@ -83,6 +82,18 @@ public class RssTransformer implements Transformer<BillInfo> {
             + "xmlns:parss=\"https://www.legis.state.pa.us/RSS\" version=\"2.0\">"
             + itemBody
             + "</rss>";
+  }
+
+  private String encodeLink(String value) {
+    var temp = value
+            .replace(IntegrationConstants.LINK_XML_START, "")
+            .replace(IntegrationConstants.LINK_XML_END, "");
+    return encapsulateLink(Base64.getEncoder()
+            .encodeToString(temp.getBytes(StandardCharsets.UTF_8)));
+  }
+
+  private String encapsulateLink(String base64Value) {
+    return IntegrationConstants.LINK_XML_START + base64Value + IntegrationConstants.LINK_XML_END;
   }
 }
 

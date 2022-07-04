@@ -1,6 +1,6 @@
 package com.lswebworld.rssbillreader.processors;
 
-import com.lswebworld.rssbillreader.dataobjects.BillInfo;
+import com.lswebworld.bills.data.dataobjects.BillInfo;
 import com.lswebworld.rssbillreader.repositories.BillDataRepository;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;

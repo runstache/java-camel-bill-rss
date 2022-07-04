@@ -2,11 +2,13 @@ package com.lswebworld.rssbillreader;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 /**
  * Main Application.
  */
 @SpringBootApplication
+@EntityScan({"com.lswebworld"})
 public class RssBillReaderApplication {
 
 

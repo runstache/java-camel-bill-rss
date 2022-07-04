@@ -60,7 +60,7 @@ class RssTransformerTest {
             .as("Last Action should be Referred to FINANCE, June 24, 2022")
             .isEqualToIgnoringCase("Referred to FINANCE, June 24, 2022");
 
-    assertThat(result.get().getPrimeSponsor())
+    assertThat(result.get().getPrimeSponsors())
             .as("Prime Sponsor should be Representative RYAN")
             .isEqualToIgnoringCase("Representative RYAN");
     assertThat(result.get().isEnacted()).isFalse();

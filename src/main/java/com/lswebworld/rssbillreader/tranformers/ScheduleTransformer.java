@@ -2,8 +2,9 @@ package com.lswebworld.rssbillreader.tranformers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.lswebworld.bills.data.dataobjects.ScheduleInfo;
 import com.lswebworld.rssbillreader.configuration.AppSettings;
-import com.lswebworld.rssbillreader.dataobjects.ScheduleEntry;
+import com.lswebworld.rssbillreader.constants.IntegrationConstants;
 import com.lswebworld.rssbillreader.dataobjects.ScheduleRssItem;
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
@@ -17,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Transformer for handling Transformation Schedule Entries.
  */
 @Slf4j
-public class ScheduleTransformer implements Transformer<ScheduleEntry> {
+public class ScheduleTransformer implements Transformer<ScheduleInfo> {
 
   private final AppSettings settings;
 
@@ -28,7 +29,7 @@ public class ScheduleTransformer implements Transformer<ScheduleEntry> {
 
 
   @Override
-  public Optional<ScheduleEntry> transform(String value) {
+  public Optional<ScheduleInfo> transform(String value) {
 
     try {
       var mapper = new XmlMapper();
@@ -57,10 +58,8 @@ public class ScheduleTransformer implements Transformer<ScheduleEntry> {
   private String cleanUpXml(String value) {
     String[] lines = value.split("\n");
     for (int i = 0; i < lines.length; i++) {
-      if (lines[i].contains("<link>")) {
-        var temp = lines[i].replace("<link>", "").replace("</link>", "");
-        var url = Base64.getEncoder().encodeToString(temp.getBytes(StandardCharsets.UTF_8));
-        lines[i] = "<link>" + url + "</link>";
+      if (lines[i].contains(IntegrationConstants.LINK_XML_START)) {
+        lines[i] = encodeLink(lines[i]);
       }
     }
 
@@ -72,5 +71,17 @@ public class ScheduleTransformer implements Transformer<ScheduleEntry> {
             + "xmlns:parss=\"https://www.legis.state.pa.us/RSS\" version=\"2.0\">"
             + itemBody
             + "</rss>";
+  }
+
+  private String encodeLink(String value) {
+    var temp = value
+            .replace(IntegrationConstants.LINK_XML_START, "")
+            .replace(IntegrationConstants.LINK_XML_END, "");
+    return encapsulateLink(Base64.getEncoder()
+            .encodeToString(temp.getBytes(StandardCharsets.UTF_8)));
+  }
+
+  private String encapsulateLink(String base64Value) {
+    return IntegrationConstants.LINK_XML_START + base64Value + IntegrationConstants.LINK_XML_END;
   }
 }

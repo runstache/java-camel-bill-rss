@@ -2,11 +2,11 @@ package com.lswebworld.rssbillreader.processors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.lswebworld.bills.data.dataobjects.ScheduleInfo;
 import com.lswebworld.rssbillreader.constants.ErrorConstants;
 import com.lswebworld.rssbillreader.constants.HeaderConstants;
 import com.lswebworld.rssbillreader.constants.ScheduleTypes;
 import com.lswebworld.rssbillreader.dataobjects.EtlException;
-import com.lswebworld.rssbillreader.dataobjects.ScheduleEntry;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import org.apache.camel.EndpointInject;
@@ -71,7 +71,7 @@ class ScheduleProcessorTest {
     assertThat(msg.getMessage().getBody())
             .as("Body should be a ScheduleEntry")
             .isNotNull()
-            .isInstanceOf(ScheduleEntry.class);
+            .isInstanceOf(ScheduleInfo.class);
   }
 
   @Test
@@ -90,9 +90,9 @@ class ScheduleProcessorTest {
     assertThat(msg.getMessage().getBody())
             .as("Body should be a ScheduleEntry")
             .isNotNull()
-            .isInstanceOf(ScheduleEntry.class);
+            .isInstanceOf(ScheduleInfo.class);
 
-    var result = msg.getMessage().getBody(ScheduleEntry.class);
+    var result = msg.getMessage().getBody(ScheduleInfo.class);
     assertThat(result.getScheduleType())
             .as("Schedule Type should be Senate")
             .isEqualToIgnoringCase(ScheduleTypes.SENATE);
@@ -114,8 +114,8 @@ class ScheduleProcessorTest {
     assertThat(msg.getMessage().getBody())
             .as("Body should be a ScheduleEntry")
             .isNotNull()
-            .isInstanceOf(ScheduleEntry.class);
-    var result = msg.getMessage().getBody(ScheduleEntry.class);
+            .isInstanceOf(ScheduleInfo.class);
+    var result = msg.getMessage().getBody(ScheduleInfo.class);
     assertThat(result.getScheduleType())
             .as("Schedule Type should be House")
             .isEqualToIgnoringCase(ScheduleTypes.HOUSE);

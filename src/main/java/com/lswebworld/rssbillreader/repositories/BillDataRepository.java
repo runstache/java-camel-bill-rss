@@ -1,6 +1,6 @@
 package com.lswebworld.rssbillreader.repositories;
 
-import com.lswebworld.rssbillreader.dataobjects.BillInfo;
+import com.lswebworld.bills.data.dataobjects.BillInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

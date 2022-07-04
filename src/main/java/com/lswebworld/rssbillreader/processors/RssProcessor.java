@@ -1,7 +1,7 @@
 package com.lswebworld.rssbillreader.processors;
 
+import com.lswebworld.bills.data.dataobjects.BillInfo;
 import com.lswebworld.rssbillreader.constants.ErrorConstants;
-import com.lswebworld.rssbillreader.dataobjects.BillInfo;
 import com.lswebworld.rssbillreader.dataobjects.EtlException;
 import com.lswebworld.rssbillreader.tranformers.Transformer;
 import java.net.URISyntaxException;

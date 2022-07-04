@@ -1,8 +1,8 @@
 package com.lswebworld.rssbillreader.configuration;
 
+import com.lswebworld.bills.data.dataobjects.BillInfo;
+import com.lswebworld.bills.data.dataobjects.ScheduleInfo;
 import com.lswebworld.rssbillreader.constants.ProcessorConstants;
-import com.lswebworld.rssbillreader.dataobjects.BillInfo;
-import com.lswebworld.rssbillreader.dataobjects.ScheduleEntry;
 import com.lswebworld.rssbillreader.processors.BillHydrationProcessor;
 import com.lswebworld.rssbillreader.processors.DatabaseProcessor;
 import com.lswebworld.rssbillreader.processors.RssProcessor;
@@ -34,7 +34,7 @@ public class BeanRegistry {
 
   @Bean(name = "ScheduleTransformer")
   @Autowired
-  public Transformer<ScheduleEntry> scheduleTransformer(AppSettings settings) {
+  public Transformer<ScheduleInfo> scheduleTransformer(AppSettings settings) {
     return new ScheduleTransformer(settings);
   }
 

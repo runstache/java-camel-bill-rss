@@ -1,9 +1,10 @@
 package com.lswebworld.rssbillreader.processors;
 
-import com.lswebworld.rssbillreader.dataobjects.ScheduleEntry;
+import com.lswebworld.bills.data.dataobjects.ScheduleInfo;
 import com.lswebworld.rssbillreader.repositories.ScheduleEntryRepository;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,7 +19,12 @@ public class ScheduleHydrationProcessor implements Processor {
   @Transactional
   @Override
   public void process(Exchange exchange) {
-    var entry = exchange.getMessage().getBody(ScheduleEntry.class);
-    repo.deleteAllByIdentifier(entry.getIdentifier());
+    var entry = exchange.getMessage().getBody(ScheduleInfo.class);
+
+    var results =
+            repo.findAllByIdentifierAndScheduleType(entry.getIdentifier(), entry.getScheduleType());
+    if (ObjectUtils.isNotEmpty(results)) {
+      repo.deleteAll(results);
+    }
   }
 }

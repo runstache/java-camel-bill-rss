@@ -1,9 +1,9 @@
 package com.lswebworld.rssbillreader.processors;
 
+import com.lswebworld.bills.data.dataobjects.ScheduleInfo;
 import com.lswebworld.rssbillreader.constants.ErrorConstants;
 import com.lswebworld.rssbillreader.constants.HeaderConstants;
 import com.lswebworld.rssbillreader.dataobjects.EtlException;
-import com.lswebworld.rssbillreader.dataobjects.ScheduleEntry;
 import com.lswebworld.rssbillreader.tranformers.Transformer;
 import java.net.URISyntaxException;
 import org.apache.camel.Exchange;
@@ -19,7 +19,7 @@ public class ScheduleProcessor implements Processor {
 
   @Autowired
   @Qualifier("ScheduleTransformer")
-  Transformer<ScheduleEntry> transformer;
+  Transformer<ScheduleInfo> transformer;
 
   @Override
   public void process(Exchange exchange) throws EtlException {

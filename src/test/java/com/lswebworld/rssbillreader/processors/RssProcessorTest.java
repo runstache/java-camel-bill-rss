@@ -2,7 +2,7 @@ package com.lswebworld.rssbillreader.processors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.lswebworld.rssbillreader.dataobjects.BillInfo;
+import com.lswebworld.bills.data.dataobjects.BillInfo;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import lombok.extern.slf4j.Slf4j;
