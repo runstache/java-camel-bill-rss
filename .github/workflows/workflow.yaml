@@ -8,7 +8,6 @@ env:
   MAVEN_USER:  ${{ secrets.PACKAGE_USER }}
   MAVEN_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
   MAVEN_REPO: ${{ secrets.MAVEN_GITHUB_REPO }}
-  IMAGE_NAME: ${{ secrets.IMAGE_NAME }}
 
 jobs:
   build:
@@ -60,6 +59,6 @@ jobs:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_API_KEY }}
       - name: Build and push
-        run: docker image build --tag ${IMAGE_NAME}:${VERSION} --build-arg MAVEN_USER=${MAVEN_USER} --build-arg MAVEN_PASSWORD=${MAVEN_PASSWORD} --build-arg MAVEN_CLI_OPTS=${MAVEN_CLI_OPTS} .
+        run: docker image build --tag rss-reader:${VERSION} --build-arg MAVEN_USER=${MAVEN_USER} --build-arg MAVEN_PASSWORD=${MAVEN_PASSWORD} --build-arg MAVEN_CLI_OPTS=${MAVEN_CLI_OPTS} .
       - name: Push Docker
-        run: docker push ${IMAGE_NAME}:${VERSION}
+        run: docker push rss-reader:${VERSION}
