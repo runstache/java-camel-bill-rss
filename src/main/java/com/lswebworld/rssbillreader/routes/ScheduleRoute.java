@@ -1,10 +1,12 @@
 package com.lswebworld.rssbillreader.routes;
 
+import com.lswebworld.rssbillreader.configuration.AppSettings;
 import com.lswebworld.rssbillreader.constants.HeaderConstants;
 import com.lswebworld.rssbillreader.constants.ProcessorConstants;
 import com.lswebworld.rssbillreader.constants.ScheduleTypes;
 import com.lswebworld.rssbillreader.dataobjects.EtlException;
 import org.apache.camel.builder.RouteBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -12,6 +14,10 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class ScheduleRoute extends RouteBuilder {
+
+  @Autowired
+  AppSettings settings;
+
   @Override
   public void configure() {
 
@@ -19,7 +25,7 @@ public class ScheduleRoute extends RouteBuilder {
             .log("ERROR")
             .end();
 
-    from("rss:https://www.legis.state.pa.us/WU01/LI/RSS/CAL/HouseCalendarSS0reg.xml?splitEntries=false&delay=60000")
+    from("rss:https://www.legis.state.pa.us/WU01/LI/RSS/CAL/HouseCalendarSS0reg.xml?splitEntries=false&delay=" + settings.getPollInterval())
             .routeId("house-schedule-route")
             .onCompletion()
                 .log("Finished House Schedule Entries")
@@ -34,7 +40,7 @@ public class ScheduleRoute extends RouteBuilder {
             .bean(ProcessorConstants.SCHEDULE_DB_PROCESSOR)
             .end();
 
-    from("rss:https://www.legis.state.pa.us/WU01/LI/RSS/CAL/SenateCalendarSS0reg.xml?splitEntries=false&delay=60000")
+    from("rss:https://www.legis.state.pa.us/WU01/LI/RSS/CAL/SenateCalendarSS0reg.xml?splitEntries=false&delay=" + settings.getPollInterval())
             .routeId("senate-schedule-route")
             .onCompletion()
             .log("Finished Senate Schedule Entries")
