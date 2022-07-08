@@ -21,4 +21,6 @@ public class ProcessorConstants {
 
   public static final String SCHEDULE_HYDRATION_PROCESSOR = "ScheduleHydrationProcessor";
 
+  public static final String ERROR_PROCESSOR = "ErrorProcessor";
+
 }

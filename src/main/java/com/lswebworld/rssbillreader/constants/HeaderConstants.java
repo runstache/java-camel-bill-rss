@@ -10,4 +10,5 @@ public class HeaderConstants {
   }
 
   public static final String SCHEDULE_TYPE = "ScheduleType";
+  public static final String RECORD_SROUCE = "RecordSource";
 }
