@@ -22,28 +22,3 @@ jobs:
           cache: 'maven'
       - name: Validate with Maven
         run: mvn $MAVEN_CLI_OPTS clean verify
-  docker_build:
-    if: github.ref_name == 'main' && github.ref_type == 'branch'
-    runs-on: ubuntu-latest
-    needs: [test]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Setup Java
-        uses: actions/setup-java@v3
-        with:
-          java-version: '11'
-          distribution: 'corretto'
-          architecture: 'x64'
-          cache: 'maven'
-      - name: Login to DockerHub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_USER }}
-          password: ${{ secrets.DOCKER_API_KEY }}
-      - name: Build and push
-        run: docker buildx build --platform=linux/arm64 --tag rss-reader:latest --build-arg MAVEN_USER="${{secrets.PACKAGE_USER}}" --build-arg MAVEN_PASSWORD="${{secrets.GITHUB_TOKEN}}" --build-arg MAVEN_CLI_OPTS="${{env.MAVEN_CLI_OPTS}}" --build-arg MAVEN_OPTS="${{ env.MAVEN_OPTS }}" .
-      - name: Tag Image
-        run: docker tag rss-reader:latest larrywshields/rss-reader:latest
-      - name: Push Docker
-        run: docker push larrywshields/rss-reader:latest
