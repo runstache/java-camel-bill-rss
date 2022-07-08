@@ -24,9 +24,17 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel.springboot</groupId>
-            <artifactId>camel-spring-boot-starter</artifactId>
+            <artifactId>camel-jmx-starter</artifactId>
             <version>3.17.0</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.camel/camel-metrics -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-metrics</artifactId>
+            <version>3.17.0</version>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-rss</artifactId>

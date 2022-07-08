@@ -33,7 +33,8 @@ RUN yum update && yum upgrade
 # Copy the application layers
 COPY --from=builder ${BUILD}/dependencies/ /opt/apps/
 COPY --from=builder ${BUILD}/spring-boot-loader/ /opt/apps/
-COPY --from=builder ${BUILD}/application/ /opt/apps
+COPY --from=builder ${BUILD}/snapshot-dependencies/ /opt/apps/
+COPY --from=builder ${BUILD}/application/ /opt/apps/
 
 FROM base
 
@@ -45,4 +46,4 @@ WORKDIR /opt/apps
 
 HEALTHCHECK NONE
 
-CMD ["java", "-Djava.rmi.server.hostname=rss-reader", "-Dcom.sun.management.jmxremote.local.only=false", "-Dcom.sun.management.jmxremote.port=8089", "-Dcom.sun.management.jmxremote.ssl=false", "org.springframework.boot.loader.JarLauncher"]
+CMD ["java", "-Djava.rmi.server.hostname=rss-reader", "-Dcom.sun.management.jmxremote.local.only=false", "-Dcom.sun.management.jmxremote.port=8089", "-Dcom.sun.management.jmxremote.ssl=false", "-Dcom.sun.management.jmxremote.authenticate=false", "org.springframework.boot.loader.JarLauncher"]
