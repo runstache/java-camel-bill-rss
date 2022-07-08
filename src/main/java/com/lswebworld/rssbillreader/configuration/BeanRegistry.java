@@ -6,6 +6,7 @@ import com.lswebworld.bills.data.dataobjects.ScheduleInfo;
 import com.lswebworld.rssbillreader.constants.ProcessorConstants;
 import com.lswebworld.rssbillreader.processors.BillHydrationProcessor;
 import com.lswebworld.rssbillreader.processors.DatabaseProcessor;
+import com.lswebworld.rssbillreader.processors.ErrorProcessor;
 import com.lswebworld.rssbillreader.processors.RssProcessor;
 import com.lswebworld.rssbillreader.processors.ScheduleDatabaseProcessor;
 import com.lswebworld.rssbillreader.processors.ScheduleHydrationProcessor;
@@ -70,6 +71,11 @@ public class BeanRegistry {
   @Bean(name = "MetricRegistry")
   public MetricRegistry metricRegistry() {
     return new MetricRegistry();
+  }
+
+  @Bean(name = ProcessorConstants.ERROR_PROCESSOR)
+  public ErrorProcessor errorProcessor() {
+    return new ErrorProcessor();
   }
 
   /**
