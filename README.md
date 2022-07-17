@@ -1,10 +1,10 @@
-# java-camel-bill-rss
+# RSS Reader Application
 RSS Feed Reader for pulling legislative information from the State Web Site.
 
-## Building the Application
+## Requirements
 
-The application is bundled with a docker file that will build the application in layers.  The below command will build the Docker image:
+In order to build the application, the bills-data library is needed.  This is available [here](https://github.com/runstache/java-bills-data)
 
-```bash
-docker buildx build --platform=linux/arm64 --tag rss-reader:latest --build-arg MAVEN_USER="github-user" --build-arg MAVEN_PASSWORD="git-hub-key" --build-arg MAVEN_CLI_OPTS="--settings .m2/settings.xml --batch-mode" --build-arg MAVEN_OPTS="-Dmaven.repo.local=.m2/repository" .
-```
+## Docker Image
+
+A Docker image of this application is hosted on Docker Hub. [Docker Hub](https://hub.docker.com/repository/docker/larrywshields/rss-reader)

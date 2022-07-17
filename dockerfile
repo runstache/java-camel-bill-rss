@@ -2,20 +2,8 @@ FROM amazoncorretto:11-al2-jdk as builder
 
 WORKDIR /opt/build
 
-ARG MAVEN_USER
-ARG MAVEN_PASSWORD
-
-COPY .m2 .m2
-COPY mvnw .
-COPY .mvn .mvn
-
-RUN chmod +x ./mvnw
-COPY src src
-COPY ignore.xml .
-COPY pom.xml .
-
 #MAVEN INSTALL
-RUN ./mvnw -DskipTests --settings .m2/settings.xml --batch-mode install
+COPY ./target/ ./target/
 RUN mkdir -p target/extracted && java -Djarmode=layertools -jar target/*.jar extract --destination target/extracted
 
 FROM amazoncorretto:11-al2-jdk as base
@@ -26,8 +14,8 @@ RUN mkdir -m777 /opt/apps && \
 
 #RUN addgroup -S rssreader && adduser -S rssreader -G rssreader
 
-RUN yum update
-RUN yum upgrade
+RUN yum update -y
+RUN yum upgrade -y
 
 # Copy the application layers
 COPY --from=builder ${BUILD}/dependencies/ /opt/apps/
