@@ -3,8 +3,7 @@ FROM amazoncorretto:11-al2-jdk as builder
 WORKDIR /opt/build
 
 #MAVEN INSTALL
-COPY ./target/ .
-
+COPY ./target/ ./target/
 RUN mkdir -p target/extracted && java -Djarmode=layertools -jar target/*.jar extract --destination target/extracted
 
 FROM amazoncorretto:11-al2-jdk as base
