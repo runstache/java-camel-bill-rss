@@ -26,8 +26,8 @@ RUN mkdir -m777 /opt/apps && \
 
 #RUN addgroup -S rssreader && adduser -S rssreader -G rssreader
 
-RUN yum update
-RUN yum upgrade
+RUN yum update -y
+RUN yum upgrade -y
 
 # Copy the application layers
 COPY --from=builder ${BUILD}/dependencies/ /opt/apps/
