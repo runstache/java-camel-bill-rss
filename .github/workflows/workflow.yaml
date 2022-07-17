@@ -14,12 +14,12 @@ jobs:
         with:
           java-version: '11'
           distribution: 'corretto'
-          architecture: 'amd64'
           cache: 'maven'
       - run: mvn $MVN_CLI_OPTS compile
 
   test:
     runs-on: ubuntu-latest
+    needs: ['build']
     steps:
       - uses: actions/checkout@v3
       - name: Setup JDK 11
@@ -27,6 +27,5 @@ jobs:
         with:
           java-version: '11'
           distribution: 'corretto'
-          architecture: 'amd64'
           cache: 'maven'
       - run: mvn $MAVEN_CLI_OPTS verify
