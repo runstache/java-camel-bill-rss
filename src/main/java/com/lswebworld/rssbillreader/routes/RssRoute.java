@@ -1,6 +1,7 @@
 package com.lswebworld.rssbillreader.routes;
 
 import com.lswebworld.rssbillreader.configuration.AppSettings;
+import com.lswebworld.rssbillreader.constants.HeaderConstants;
 import com.lswebworld.rssbillreader.constants.ProcessorConstants;
 import com.lswebworld.rssbillreader.dataobjects.EtlException;
 import org.apache.camel.builder.RouteBuilder;
@@ -21,6 +22,7 @@ public class RssRoute extends RouteBuilder {
 
     onException(EtlException.class)
             .log("ERROR")
+            .handled(true)
             .end();
 
     from("rss:https://www.legis.state.pa.us/WU01/LI/RSS/HouseBills.xml?splitEntries=false&delay=" + settings.getPollInterval())
@@ -29,6 +31,7 @@ public class RssRoute extends RouteBuilder {
                 .log("Finished Pulling House Bills")
                 .end()
             .log("Processing House Bills")
+            .setHeader(HeaderConstants.RECORD_SROUCE, constant("house-bill"))
             .marshal().rss()
             .split().tokenizeXML("item").streaming()
             .parallelProcessing(true).threads(5, 10)
@@ -43,6 +46,7 @@ public class RssRoute extends RouteBuilder {
                 .log("Finished Pulling Senate Bills")
                 .end()
             .log("Processing Senate Bills")
+            .setHeader(HeaderConstants.RECORD_SROUCE, constant("house-bill"))
             .marshal().rss()
             .split().tokenizeXML("item").streaming()
             .parallelProcessing(true).threads(5, 10)

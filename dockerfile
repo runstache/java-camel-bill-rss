@@ -2,8 +2,6 @@ FROM amazoncorretto:11-al2-jdk as builder
 
 WORKDIR /opt/build
 
-ARG MAVEN_CLI_OPTS
-ARG MAVEN_OPTS
 ARG MAVEN_USER
 ARG MAVEN_PASSWORD
 
@@ -17,7 +15,7 @@ COPY ignore.xml .
 COPY pom.xml .
 
 #MAVEN INSTALL
-RUN ./mvnw -DskipTests $MAVEN_CLI_OPTS $MAVEN_OPTS install
+RUN ./mvnw -DskipTests --settings .m2/settings.xml --batch-mode install
 RUN mkdir -p target/extracted && java -Djarmode=layertools -jar target/*.jar extract --destination target/extracted
 
 FROM amazoncorretto:11-al2-jdk as base

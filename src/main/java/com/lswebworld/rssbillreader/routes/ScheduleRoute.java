@@ -23,6 +23,8 @@ public class ScheduleRoute extends RouteBuilder {
 
     onException(EtlException.class)
             .log("ERROR")
+            .bean(ProcessorConstants.ERROR_PROCESSOR)
+            .handled(true)
             .end();
 
     from("rss:https://www.legis.state.pa.us/WU01/LI/RSS/CAL/HouseCalendarSS0reg.xml?splitEntries=false&delay=" + settings.getPollInterval())
@@ -31,6 +33,7 @@ public class ScheduleRoute extends RouteBuilder {
                 .log("Finished House Schedule Entries")
                 .end()
             .log("Processing House Schedule")
+            .setHeader(HeaderConstants.RECORD_SROUCE, constant("house-schedule"))
             .setProperty(HeaderConstants.SCHEDULE_TYPE, constant(ScheduleTypes.HOUSE))
             .marshal().rss()
             .split().tokenizeXML("item").streaming().parallelProcessing(true)
@@ -46,6 +49,7 @@ public class ScheduleRoute extends RouteBuilder {
             .log("Finished Senate Schedule Entries")
             .end()
             .log("Processing Senate Schedule")
+            .setHeader(HeaderConstants.RECORD_SROUCE, constant("sentate-schedule"))
             .setProperty(HeaderConstants.SCHEDULE_TYPE, constant(ScheduleTypes.SENATE))
             .marshal().rss()
             .split().tokenizeXML("item").streaming().parallelProcessing(true)
@@ -54,8 +58,5 @@ public class ScheduleRoute extends RouteBuilder {
             .bean(ProcessorConstants.SCHEDULE_HYDRATION_PROCESSOR)
             .bean(ProcessorConstants.SCHEDULE_DB_PROCESSOR)
             .end();
-
-
-
   }
 }

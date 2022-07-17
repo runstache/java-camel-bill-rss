@@ -15,6 +15,6 @@ import org.springframework.context.annotation.Configuration;
 public class AppSettings {
 
   private String billPrefix;
-  private int pollInterval;
+  private long pollInterval;
 
 }
