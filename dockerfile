@@ -3,7 +3,6 @@ FROM amazoncorretto:11-al2-jdk as builder
 WORKDIR /opt/build
 
 #MAVEN INSTALL
-RUN ./mvnw -DskipTests --settings .m2/settings.xml --batch-mode install
 COPY ./target/ .
 
 RUN mkdir -p target/extracted && java -Djarmode=layertools -jar target/*.jar extract --destination target/extracted
