@@ -15,7 +15,7 @@ jobs:
           java-version: '11'
           distribution: 'corretto'
           cache: 'maven'
-      - run: mvn $MVN_CLI_OPTS compile
+      - run: mvn --settings .m2/settings.xml --batch-mode compile
 
   test:
     runs-on: ubuntu-latest
@@ -28,4 +28,4 @@ jobs:
           java-version: '11'
           distribution: 'corretto'
           cache: 'maven'
-      - run: mvn $MAVEN_CLI_OPTS verify
+      - run: mvn --settings .m2/settings.xml --batch-mode verify
